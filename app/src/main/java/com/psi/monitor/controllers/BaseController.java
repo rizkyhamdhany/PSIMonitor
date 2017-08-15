@@ -1,6 +1,5 @@
 package com.psi.monitor.controllers;
 
-import android.content.pm.PackageInfo;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,9 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,8 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public abstract class BaseController<T> implements OnCallAPI {
 
-    private static final String API_BASE_URL = "";
-    private static final String API_STAGGING_BASE_URL = "";
     protected T data;
     protected static String token, buildNo;
     protected Map<String, Object> getParams = new HashMap<>();
@@ -91,12 +86,11 @@ public abstract class BaseController<T> implements OnCallAPI {
 //            if (BuildConfig.DEBUGMODE == 1){
                 client.addInterceptor(logging);
 //            }
-            client.addInterceptor(headerInterceptor);
             return client;
         }
 
         private Retrofit.Builder retrofit = new Retrofit.Builder()
-                .baseUrl(API_BASE_URL)
+                .baseUrl(EndPoint.getApiBaseUri())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient().build());
 
@@ -132,30 +126,6 @@ public abstract class BaseController<T> implements OnCallAPI {
         }
         return errorMessage;
     }
-
-    private static Interceptor headerInterceptor = new Interceptor() {
-        @Override
-        public okhttp3.Response intercept(Chain chain) throws IOException {
-            PackageInfo pinfo;
-            try {
-
-                //ET2.setText(versionNumber);
-            } catch (Exception e) {
-
-            }
-            Request.Builder builder = chain.request().newBuilder()
-                    .addHeader("coordinate", "1.2,2.1")
-                    .addHeader("lang", "en")
-//                    .addHeader("version", VERSION_NAME)
-//                    .addHeader("build", String.valueOf(VERSION_CODE))
-                    .addHeader("platform", "android"+android.os.Build.VERSION.RELEASE);
-            if (token != null){
-                builder.addHeader("token" , token);
-            }
-            Request request = builder.build();
-            return chain.proceed(request);
-        }
-    };
 
     protected String postData(Object data){
         Gson gson = (new GsonBuilder().disableHtmlEscaping().serializeNulls().create());
