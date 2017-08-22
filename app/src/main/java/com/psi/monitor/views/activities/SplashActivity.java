@@ -17,11 +17,9 @@ import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.psi.monitor.R;
 import com.psi.monitor.controllers.PSIController;
 import com.psi.monitor.utils.Utils;
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -152,8 +150,6 @@ public class SplashActivity extends Activity {
             final List<String> permissionsList = new ArrayList<>();
             if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
                 permissionsNeeded.add(getString(R.string.permission_location));
-            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                permissionsNeeded.add(getString(R.string.permission_storage));
 
             if (permissionsList.size() > 0) {
                 if (permissionsNeeded.size() > 0) {
@@ -196,12 +192,10 @@ public class SplashActivity extends Activity {
      */
     private void initFirst() {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat dfTime = new SimpleDateFormat("hh:mm:ss");
         final String date = df.format(new Date());
-        final String time = dfTime.format(new Date());
 
 
-        new PSIController(){
+        new PSIController(context, date){
             @Override
             public void onAPIsuccess() {
                 super.onAPIsuccess();
@@ -295,14 +289,12 @@ public class SplashActivity extends Activity {
             Map<String, Integer> perms = new HashMap<>();
             // Initial
             perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
 
             // Fill with results
             for (int i = 0; i < permissions.length; i++)
                 perms.put(permissions[i], grantResults[i]);
             // Check for ACCESS_FINE_LOCATION
-            if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 // All Permissions Granted
                 initFirst();
             } else {

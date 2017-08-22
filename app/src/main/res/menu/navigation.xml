@@ -11,9 +11,4 @@
         android:icon="@drawable/ic_action_history"
         android:title="@string/title_24_hr_psi" />
 
-    <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_action_insert_chart"
-        android:title="@string/title_pol_subindex" />
-
 </menu>

@@ -1,6 +1,8 @@
 package com.psi.monitor.controllers;
 
+import android.content.Context;
 import com.psi.monitor.controllers.apidata.PsiByDates;
+import com.psi.monitor.models.PrefHelper;
 
 /**
  * Created by hamdhanywijaya@gmail.com on 8/16/17.
@@ -8,23 +10,22 @@ import com.psi.monitor.controllers.apidata.PsiByDates;
 
 public class PSIController extends BaseController<PsiByDates.Response> {
 
+    private Context context;
     private String date;
-    private enum Type{
-        DATETIME, DATE
+
+    public PSIController(Context context, String date) {
+        this.context = context;
+        this.date = date;
     }
-    private Type type;
-
-    public PSIController(String date, Type type) {
-        this.type = type;
-    }
-
-    public PSIController(){
-
+    public PSIController(String date){
+        this.date = date;
     }
 
     @Override
     public void onAPIsuccess() {
-
+        if (context != null){
+            PrefHelper.getInstance(context).setPsiData(data.toString());
+        }
     }
 
     @Override
@@ -34,13 +35,6 @@ public class PSIController extends BaseController<PsiByDates.Response> {
 
     @Override
     public void execute() {
-        if (date == null){
-
-        }
-        if (type == Type.DATETIME){
-            getService().psiByDateTimes("2017-08-20", "3kkVzCyHlj7mbPmwRhyYcK9RdGx4ny4h").enqueue(callback);
-        } else{
-            getService().psiByDates("2017-08-20", "3kkVzCyHlj7mbPmwRhyYcK9RdGx4ny4h").enqueue(callback);
-        }
+        getService().psiByDates(date, "3kkVzCyHlj7mbPmwRhyYcK9RdGx4ny4h").enqueue(callback);
     }
 }
